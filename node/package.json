@@ -1,0 +1,23 @@
+{
+  "name": "aerospike-map-operations",
+  "version": "1.0.0",
+  "description": "Aerospike map operations example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helipilot50/aerospike-map-operations.git"
+  },
+  "keywords": [
+    "aerospike",
+    "map"
+  ],
+  "author": "Peter Milne",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/helipilot50/aerospike-map-operations/issues"
+  },
+  "homepage": "https://github.com/helipilot50/aerospike-map-operations#readme"
+}
