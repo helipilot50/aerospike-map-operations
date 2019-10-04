@@ -1,4 +1,4 @@
-package jar;
+package net.helipilot50.aerospike.cdt.map;
 
 /**
  * Hello world!
