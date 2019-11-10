@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 
 import com.aerospike.client.AerospikeClient;
-import com.aerospike.client.Bin;
+import com.aerospike.client.AerospikeException.Connection;
 import com.aerospike.client.Key;
-import com.aerospike.client.Operation;
 import com.aerospike.client.Record;
 import com.aerospike.client.Value;
-import com.aerospike.client.AerospikeException.Connection;
 import com.aerospike.client.cdt.CTX;
 import com.aerospike.client.cdt.MapOperation;
 import com.aerospike.client.cdt.MapOrder;
@@ -25,13 +24,19 @@ enum EventType{
 	CONVERSION("conversion");
 	
 	public final String label;
+	
+	private static EventType[] list = EventType.values();
+
+    public static EventType getEvent(int i) {
+        return list[i];
+    }
 	 
     private EventType(String label) {
         this.label = label;
     }
 }
 
-public class CDTMapExample {
+public class CDTMapExample extends TimerTask{
 	
     private static final List<String> campaignKeys = new ArrayList<String>() {
         private static final long serialVersionUID = 408064932585810852L;
@@ -53,55 +58,17 @@ public class CDTMapExample {
     };
     
 
-    private static final List<String> sites = new ArrayList<String>() {
-        private static final long serialVersionUID = 1L;
-        {
-            add("http://some.place.com/app");
-            add("http://some.place.com/app/catalog");
-            add("http://some.place.com/app/catalog/bike");
-            add("http://some.place.com/app/catalog/scooter");
-            add("http://some.place.com/app/catalog/doll");
-            add("http://some.place.com/app/catalog/teddybare");
-            add("http://some.place.com/app//catalog/banana");
-            add("http://some.place.com/app/catalog/pare");
-            add("http://some.place.com/app/catalog/lemon");
-            add("http://some.place.com/app/catalog/pineapple");
-            add("http://some.place.com/app/catalog/lego");
-            add("http://some.place.com/app/catalog/paint");
-            add("http://some.place.com/app/catalog/cloth");
-            add("http://some.place.com/app/catalog/blocks");
-            add("http://some.place.com/app/catalog/bread");
-            add("http://some.place.com/app/catalog/glue");
-            add("http://some.place.com/app/catalog/arduino");
-            add("http://some.place.com/app/catalog/arduino/uno");
-            add("http://some.place.com/app/catalog/arduino/due");
-            add("http://some.place.com/app/catalog/arduino/Mega");
-            add("http://some.place.com/app/catalog/arduino/Leonardo");
-            add("http://some.place.com/app/catalog/arduino/lilypad");
-            add("http://some.place.com/app/catalog/pi/4");
-            add("http://some.place.com/app/catalog/pi/3Aplus");
-            add("http://some.place.com/app/catalog/pi/3Bplus");
-            add("http://some.place.com/app/catalog/pi/zeroW");
-            add("http://some.place.com/app/catalog/pi/3");
-            add("http://some.place.com/app/catalog/pi/zero");
-            add("http://some.place.com/app/catalog/pi/2");
-            add("http://some.place.com/app/catalog/pi/Aplus");
-            add("http://some.place.com/app/catalog/pi/B");
-        }
-    };
 
     private static String randomCampaign() {
         int index = (int) (Math.random() * campaignKeys.size());
         return campaignKeys.get(index);
     }
 
-    private static EventType randomEvent {
-        int index = (int) (Math.random() * sites.size());
-        return EventType.values()[index];
+    private static EventType randomEvent() {
+        int index = (int) (Math.random() * 4);
+        return EventType.getEvent(index);
     }
 
-
-	
 	private AerospikeClient asClient = null;
 
 	public CDTMapExample() {
@@ -172,6 +139,15 @@ public class CDTMapExample {
 		Record record = asClient.operate(null, key,
 		MapOperation.increment(MapPolicy.Default, binName, element, Value.get(1), 
 				CTX.mapKey(Value.get("campaignDetails")), CTX.mapKey(Value.get("dataCube"))));
+		
+	}
+
+	@Override
+	public void run() {
+        String campaign = randomCampaign();
+        EventType event = randomEvent();
+        System.out.println(String.format("Efent: %s on %s", event, campaign));
+        addEvent(campaign, event);
 		
 	}
 
